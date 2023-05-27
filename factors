@@ -10,12 +10,16 @@ def gcd(a, b):
     return a
 
 def pollards_rho_factorize(number):
-    if number == 2:
-        return [2]
-
     if number % 2 == 0:
         return [2] + pollards_rho_factorize(number // 2)
-
+    
+    if number <= 1:
+        return []
+    
+    # Check if the number is prime
+    if is_prime(number):
+        return [number]
+    
     x = random.randint(1, number - 1)
     c = random.randint(1, number - 1)
     y = x
@@ -32,6 +36,14 @@ def pollards_rho_factorize(number):
     
     return [d] + pollards_rho_factorize(number // d)
 
+def is_prime(number):
+    if number < 2:
+        return False
+    for i in range(2, int(math.sqrt(number)) + 1):
+        if number % i == 0:
+            return False
+    return True
+
 def factorize_number(number):
     factors = pollards_rho_factorize(number)
     return factors
@@ -43,7 +55,6 @@ def factorize_file(filename):
             factors = factorize_number(number)
             factorization = '*'.join(map(str, factors))
             print(f"{number}={factorization}")
-            sys.stdout.flush()  # Flush the output to ensure it's printed immediately
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -51,4 +62,3 @@ if __name__ == '__main__':
         sys.exit(1)
     filename = sys.argv[1]
     factorize_file(filename)
-
